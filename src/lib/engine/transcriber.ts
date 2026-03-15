@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const MODEL_ID = 'gemini-1.5-flash';
+const MODEL_ID = 'gemini-2.5-flash';
 
 export interface TranscriptionResult {
   transcript: string;

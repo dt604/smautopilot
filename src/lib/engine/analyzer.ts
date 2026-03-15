@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { BrandBrain, RawPageSignals } from './types';
 
-const MODEL_ID = 'gemini-1.5-flash';
+const MODEL_ID = 'gemini-2.5-flash';
 
 /**
  * Sends raw page signals to Gemini 1.5 Pro and returns a structured BrandBrain.
