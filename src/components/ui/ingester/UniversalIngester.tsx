@@ -77,7 +77,7 @@ export default function UniversalIngester() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           urls,
-          user_id: "demo-user-123" // Placeholder until auth is wired
+          user_id: "00000000-0000-0000-0000-000000000001" // Placeholder until auth is wired
         }),
       });
 
