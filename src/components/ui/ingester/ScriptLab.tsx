@@ -66,26 +66,26 @@ export default function ScriptLab({ businessId, voiceMemoId, onScriptsGenerated,
 
     setIsApproving(true);
     try {
-      const { data, error: updateError } = await supabase
-        .from('scripts')
-        .update({ status: 'approved' })
-        .eq('id', currentSaved.id)
-        .select()
-        .single();
+      const response = await fetch("/api/scripts/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ script_id: currentSaved.id }),
+      });
 
-      if (updateError) throw updateError;
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
 
       // Update local state
       const newSaved = [...savedScripts];
-      newSaved[currentIndex] = data;
+      newSaved[currentIndex] = { ...currentSaved, status: 'approved' };
       setSavedScripts(newSaved);
       
-      onScriptApproved?.(data);
+      onScriptApproved?.(result.data);
       toast.success("Script approved! Ready for production.");
       
       // Emit event for Dashboard/Production Monitor
       window.dispatchEvent(new CustomEvent("script-status-updated", { 
-        detail: { script: data } 
+        detail: { script: result.data } 
       }));
 
     } catch (err: any) {

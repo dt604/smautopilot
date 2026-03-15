@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Check, Play, Star, Sparkles, Filter, ChevronRight, ChevronLeft } from "lucide-react";
+import { User, Check, Play, Filter } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -17,6 +17,21 @@ interface Actor {
   tags: string[];
   thumbnail: string;
   energy: "High" | "Calm" | "Professional";
+  /**
+   * Real HeyGen avatar ID — replace these with IDs from your HeyGen account.
+   * Find them at: https://app.heygen.com/avatars
+   */
+  heygen_avatar_id: string;
+  /**
+   * Default HeyGen voice ID paired with this avatar.
+   * Find them at: https://app.heygen.com/voices
+   */
+  default_voice_id: string;
+}
+
+export interface ActorSelection {
+  avatarId: string;
+  voiceId: string;
 }
 
 const MOCK_ACTORS: Actor[] = [
@@ -26,7 +41,9 @@ const MOCK_ACTORS: Actor[] = [
     style: "Lifestyle / UGC",
     tags: ["Energetic", "Fast-paced", "Relatable"],
     thumbnail: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2662&auto=format&fit=crop",
-    energy: "High"
+    energy: "High",
+    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_JORDAN",
+    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_JORDAN",
   },
   {
     id: "a2",
@@ -34,7 +51,9 @@ const MOCK_ACTORS: Actor[] = [
     style: "Corporate / Tech",
     tags: ["Clean", "Professional", "Trustworthy"],
     thumbnail: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop",
-    energy: "Professional"
+    energy: "Professional",
+    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_ELENA",
+    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_ELENA",
   },
   {
     id: "a3",
@@ -42,7 +61,9 @@ const MOCK_ACTORS: Actor[] = [
     style: "Fitness / Motivation",
     tags: ["Authoritative", "Bold", "Direct"],
     thumbnail: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2574&auto=format&fit=crop",
-    energy: "High"
+    energy: "High",
+    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_MARCUS",
+    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_MARCUS",
   },
   {
     id: "a4",
@@ -50,17 +71,19 @@ const MOCK_ACTORS: Actor[] = [
     style: "Soft / Natural",
     tags: ["Gentle", "Storyteller", "Warm"],
     thumbnail: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop",
-    energy: "Calm"
+    energy: "Calm",
+    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_SARAH",
+    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_SARAH",
   }
 ];
 
-export default function ActorGallery({ onSelect }: { onSelect?: (actorId: string) => void }) {
+export default function ActorGallery({ onSelect }: { onSelect?: (selection: ActorSelection) => void }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const handleSelect = (id: string) => {
-    setSelectedId(id);
-    onSelect?.(id);
+  const handleSelect = (actor: Actor) => {
+    setSelectedId(actor.id);
+    onSelect?.({ avatarId: actor.heygen_avatar_id, voiceId: actor.default_voice_id });
   };
 
   return (
@@ -73,7 +96,7 @@ export default function ActorGallery({ onSelect }: { onSelect?: (actorId: string
           </h3>
           <p className="text-xs text-muted-foreground mt-1">Select the AI Digital Twin to represent your brand.</p>
         </div>
-        
+
         <div className="flex gap-2">
            <button className="p-2 hover:bg-white/5 rounded-lg border border-white/5 transition-all text-muted-foreground">
              <Filter size={16} />
@@ -85,22 +108,22 @@ export default function ActorGallery({ onSelect }: { onSelect?: (actorId: string
         {MOCK_ACTORS.map((actor) => (
           <motion.div
             key={actor.id}
-            onClick={() => handleSelect(actor.id)}
+            onClick={() => handleSelect(actor)}
             onMouseEnter={() => setHoveredId(actor.id)}
             onMouseLeave={() => setHoveredId(null)}
             className={cn(
               "group relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 border-2",
-              selectedId === actor.id 
-                ? "border-primary shadow-2xl shadow-primary/20 scale-[0.98]" 
+              selectedId === actor.id
+                ? "border-primary shadow-2xl shadow-primary/20 scale-[0.98]"
                 : "border-transparent hover:border-white/10"
             )}
           >
             {/* Dark Gradient Overlay */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10" />
-            
+
             {/* Background Image */}
-            <img 
-              src={actor.thumbnail} 
+            <img
+              src={actor.thumbnail}
               alt={actor.name}
               className={cn(
                 "absolute inset-0 w-full h-full object-cover transition-transform duration-700",
@@ -152,7 +175,7 @@ export default function ActorGallery({ onSelect }: { onSelect?: (actorId: string
                 </span>
               </div>
               <p className="text-[10px] text-white/60 font-medium truncate">{actor.style}</p>
-              
+
               <div className="flex flex-wrap gap-1 mt-2">
                 {actor.tags.slice(0, 2).map((tag) => (
                   <span key={tag} className="text-[8px] text-white/40 border border-white/10 px-1.5 py-0.5 rounded">

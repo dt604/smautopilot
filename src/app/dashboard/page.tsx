@@ -45,6 +45,7 @@ export default function DashboardPage() {
   // Production State
   const [selectedScriptId, setSelectedScriptId] = useState<string | undefined>(undefined);
   const [selectedActorId, setSelectedActorId] = useState<string | undefined>(undefined);
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string | undefined>(undefined);
 
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -178,7 +179,10 @@ export default function DashboardPage() {
              className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 items-start"
            >
               <div className="lg:col-span-8 space-y-8">
-                 <ActorGallery onSelect={(id) => setSelectedActorId(id)} />
+                 <ActorGallery onSelect={(selection) => {
+                    setSelectedActorId(selection.avatarId);
+                    setSelectedVoiceId(selection.voiceId);
+                 }} />
                  <div className="glass p-8 rounded-3xl border-dashed border-white/10 flex flex-col items-center justify-center text-center space-y-4">
                     <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-muted-foreground">
                       <Video size={20} />
@@ -193,6 +197,7 @@ export default function DashboardPage() {
                  <DirectorMonitor 
                     scriptId={selectedScriptId}
                     avatarId={selectedActorId}
+                    voiceId={selectedVoiceId}
                  />
               </div>
            </motion.div>

@@ -22,9 +22,10 @@ interface LogEntry {
 interface DirectorMonitorProps {
   scriptId?: string;
   avatarId?: string;
+  voiceId?: string;
 }
 
-export default function DirectorMonitor({ scriptId, avatarId }: DirectorMonitorProps) {
+export default function DirectorMonitor({ scriptId, avatarId, voiceId }: DirectorMonitorProps) {
   const [status, setStatus] = useState<ProductionStatus>("idle");
   const [progress, setProgress] = useState(0);
   const [videoId, setVideoId] = useState<string | null>(null);
@@ -57,7 +58,8 @@ export default function DirectorMonitor({ scriptId, avatarId }: DirectorMonitorP
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           script_id: scriptId,
-          avatar_id: avatarId
+          avatar_id: avatarId,
+          voice_id: voiceId
         }),
       });
 
