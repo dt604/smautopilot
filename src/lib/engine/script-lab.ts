@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { BrandBrain, GeneratedScript } from './types';
 
-const MODEL_ID = 'gemini-1.5-pro';
+const MODEL_ID = 'gemini-2.0-flash';
 
 // The five distinct viral angles we rotate through.
 // Having named angles forces Gemini to produce genuinely different scripts
