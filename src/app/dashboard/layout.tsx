@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Radio, Wand2, Calendar, Settings, User, LogOut } from "lucide-react";
+import { LayoutDashboard, Radio, Wand2, Calendar, Settings, User, LogOut, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,6 +11,7 @@ const navItems = [
   { icon: Radio, label: "Live Trends", href: "/dashboard/trends" },
   { icon: Wand2, label: "Video Remix", href: "/dashboard/remix" },
   { icon: Calendar, label: "Content Calendar", href: "/dashboard/calendar" },
+  { icon: BarChart3, label: "Social Insights", href: "/dashboard/analytics" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];
 
