@@ -97,6 +97,23 @@ export interface VideoMetadata {
   error?: string;
 }
 
+export type SocialPlatform = 'tiktok' | 'instagram' | 'youtube';
+
+/** A social_posts record as saved to Supabase */
+export interface SavedSocialPost {
+  id: string;
+  video_id: string;
+  platform: SocialPlatform;
+  caption: string | null;
+  scheduled_at: string | null;
+  posted_at: string | null;
+  external_post_id: string | null;
+  /** Ayrshare's internal post ID — used to poll status */
+  ayrshare_post_id: string | null;
+  status: 'scheduled' | 'posted' | 'failed';
+  created_at: string;
+}
+
 /** Raw signals extracted from HTML before AI structuring */
 export interface RawPageSignals {
   url: string;

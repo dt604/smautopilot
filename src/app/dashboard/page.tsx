@@ -31,13 +31,14 @@ const ActorGallery = dynamic(
   { ssr: false, loading: () => <div className="glass p-6 rounded-3xl h-[400px] animate-pulse bg-white/5" /> }
 );
 
-const DirectorMonitor = dynamic(
-  () => import("@/components/ui/production/DirectorMonitor"),
-  { ssr: false, loading: () => <div className="glass rounded-3xl h-[500px] animate-pulse bg-white/5" /> }
-);
+const DirectorMonitor = dynamic(() => import("@/components/ui/production/DirectorMonitor"), { ssr: false });
+const SocialAccountManager = dynamic(() => import("@/components/ui/social/SocialAccountManager"), { ssr: false });
+const AnalyticsDashboard = dynamic(() => import("@/components/ui/social/AnalyticsDashboard"), { ssr: false });
+
+type Phase = "inception" | "creation" | "production" | "distribution";
 
 export default function DashboardPage() {
-  const [activePhase, setActivePhase] = useState<"inception" | "creation" | "production">("inception");
+  const [activePhase, setActivePhase] = useState<Phase>("inception");
   const [brandData, setBrandData] = useState<any>(null);
   const [businessRecord, setBusinessRecord] = useState<any>(null);
   const [voiceMemoRecord, setVoiceMemoRecord] = useState<any>(null);
@@ -93,19 +94,18 @@ export default function DashboardPage() {
           
           {/* Phase Navigation */}
           <div className="flex gap-4 mt-8">
-            {(["inception", "creation", "production"] as const).map((phase, idx) => (
+            {(["inception", "creation", "production", "distribution"] as Phase[]).map((phase, idx) => (
               <button
                 key={phase}
                 onClick={() => setActivePhase(phase)}
                 className={cn(
-                  "flex items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all border",
-                  activePhase === phase 
-                    ? "bg-primary text-white border-primary glow-sm" 
-                    : "bg-white/5 text-muted-foreground border-white/5 hover:bg-white/10"
+                  "flex-1 p-4 rounded-2xl border text-xs font-black uppercase tracking-widest transition-all",
+                  activePhase === phase
+                    ? "bg-primary text-white border-primary glow-sm shadow-xl shadow-primary/20 scale-[1.02]"
+                    : "bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10"
                 )}
               >
-                <span className="opacity-40">{idx + 1}.</span>
-                {phase}
+                Phase {idx + 1}: {phase}
               </button>
             ))}
           </div>
@@ -169,6 +169,41 @@ export default function DashboardPage() {
              </div>
           </motion.div>
         )}
+        {activePhase === "distribution" && (
+               <motion.div 
+                 key="distribution"
+                 initial={{ opacity: 0, x: 20 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -20 }}
+                 className="space-y-8"
+               >
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 items-start">
+                    <div className="lg:col-span-12">
+                      <AnalyticsDashboard />
+                    </div>
+                    <div className="lg:col-span-8">
+                       <div className="glass p-8 rounded-3xl border border-white/5 bg-white/[0.02]">
+                          <SocialAccountManager />
+                       </div>
+                    </div>
+                    <div className="lg:col-span-4 flex flex-col gap-6">
+                       <div className="glass p-6 rounded-3xl border border-primary/20 bg-primary/5">
+                          <h4 className="font-bold text-primary mb-2">Platform Readiness</h4>
+                          <p className="text-xs text-primary/60 leading-relaxed">
+                            Your content is optimized for TikTok 9:16 and Instagram Reels. YouTube Shorts normalization is active.
+                          </p>
+                       </div>
+                       <button 
+                         onClick={() => window.location.href = '/dashboard/calendar'}
+                         className="p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left group"
+                       >
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-white">View Full Schedule</p>
+                          <h5 className="font-bold mt-1 group-hover:text-primary">Content Calendar →</h5>
+                       </button>
+                    </div>
+                  </div>
+               </motion.div>
+            )}
 
         {activePhase === "production" && (
            <motion.div
