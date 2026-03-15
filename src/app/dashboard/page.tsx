@@ -6,10 +6,10 @@ import BrandIdentityReview from "@/components/ui/ingester/BrandIdentityReview";
 import TrendingPulse from "@/components/ui/ingester/TrendingPulse";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, BrainCircuit, Rocket, CheckCircle, Info, Zap, Wand2, Tv, Video, UserPlus } from "lucide-react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,6 +41,11 @@ export default function DashboardPage() {
   const [brandData, setBrandData] = useState<any>(null);
   const [businessRecord, setBusinessRecord] = useState<any>(null);
   const [voiceMemoRecord, setVoiceMemoRecord] = useState<any>(null);
+  
+  // Production State
+  const [selectedScriptId, setSelectedScriptId] = useState<string | undefined>(undefined);
+  const [selectedActorId, setSelectedActorId] = useState<string | undefined>(undefined);
+
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
@@ -60,6 +65,11 @@ export default function DashboardPage() {
   const handleVoiceComplete = (result: any) => {
     setVoiceMemoRecord(result);
     toast.success("Founder Nuance Extracted!");
+  };
+
+  const handleScriptApproved = (script: any) => {
+    setSelectedScriptId(script.id);
+    setActivePhase("production");
   };
 
   return (
@@ -150,6 +160,7 @@ export default function DashboardPage() {
                 <ScriptLab 
                    businessId={businessRecord?.id} 
                    voiceMemoId={voiceMemoRecord?.id} 
+                   onScriptApproved={handleScriptApproved}
                 />
              </div>
              <div className="lg:col-span-4 space-y-8">
@@ -167,7 +178,7 @@ export default function DashboardPage() {
              className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 items-start"
            >
               <div className="lg:col-span-8 space-y-8">
-                 <ActorGallery />
+                 <ActorGallery onSelect={(id) => setSelectedActorId(id)} />
                  <div className="glass p-8 rounded-3xl border-dashed border-white/10 flex flex-col items-center justify-center text-center space-y-4">
                     <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-muted-foreground">
                       <Video size={20} />
@@ -179,7 +190,10 @@ export default function DashboardPage() {
                  </div>
               </div>
               <div className="lg:col-span-4 space-y-8">
-                 <DirectorMonitor />
+                 <DirectorMonitor 
+                    scriptId={selectedScriptId}
+                    avatarId={selectedActorId}
+                 />
               </div>
            </motion.div>
         )}
