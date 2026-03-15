@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin as supabase } from '@/lib/supabase-admin';
 import { generateScripts } from '@/lib/engine/script-lab';
 import type { BrandBrain, SavedScript } from '@/lib/engine/types';
 
