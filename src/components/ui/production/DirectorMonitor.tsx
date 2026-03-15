@@ -66,9 +66,9 @@ export default function DirectorMonitor({ scriptId, avatarId, voiceId }: Directo
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Failed to start render.");
 
-      setVideoId(result.video_id);
+      setVideoId(result.data?.video_id);
       setStatus("rendering");
-      startPolling(result.video_id);
+      startPolling(result.data?.video_id);
     } catch (err: any) {
       setErrorStatus(err.message);
       setStatus("error");
@@ -84,14 +84,14 @@ export default function DirectorMonitor({ scriptId, avatarId, voiceId }: Directo
         const response = await fetch(`/api/render-video/status?video_id=${vid}`);
         const result = await response.json();
 
-        if (result.status === "completed") {
-          setFinalVideoUrl(result.video_url);
+        if (result.data?.status === "completed") {
+          setFinalVideoUrl(result.data?.video_url ?? null);
           setProgress(100);
           setStatus("completed");
           if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
           toast.success("Video production complete!");
-        } else if (result.status === "failed") {
-          throw new Error("HeyGen rendering failed.");
+        } else if (result.data?.status === "failed") {
+          throw new Error(result.error ?? "HeyGen rendering failed.");
         } else {
           // Increment progress artificially based on real state if possible
           // For now, let's just nudge it up slowly

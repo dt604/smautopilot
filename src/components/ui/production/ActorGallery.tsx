@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Check, Play, Filter } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
@@ -17,15 +17,7 @@ interface Actor {
   tags: string[];
   thumbnail: string;
   energy: "High" | "Calm" | "Professional";
-  /**
-   * Real HeyGen avatar ID — replace these with IDs from your HeyGen account.
-   * Find them at: https://app.heygen.com/avatars
-   */
   heygen_avatar_id: string;
-  /**
-   * Default HeyGen voice ID paired with this avatar.
-   * Find them at: https://app.heygen.com/voices
-   */
   default_voice_id: string;
 }
 
@@ -42,8 +34,8 @@ const MOCK_ACTORS: Actor[] = [
     tags: ["Energetic", "Fast-paced", "Relatable"],
     thumbnail: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2662&auto=format&fit=crop",
     energy: "High",
-    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_JORDAN",
-    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_JORDAN",
+    heygen_avatar_id: "abc6fd65312c4cd2b6e4432e35907b3a",
+    default_voice_id: "dfe9d7b19b0342a0a5f475ec35240948",
   },
   {
     id: "a2",
@@ -52,8 +44,8 @@ const MOCK_ACTORS: Actor[] = [
     tags: ["Clean", "Professional", "Trustworthy"],
     thumbnail: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop",
     energy: "Professional",
-    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_ELENA",
-    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_ELENA",
+    heygen_avatar_id: "c5cf8995a21f4f828e5be429177b986e",
+    default_voice_id: "6c417ccc9d63481ab08699c325d7dccd",
   },
   {
     id: "a3",
@@ -62,8 +54,8 @@ const MOCK_ACTORS: Actor[] = [
     tags: ["Authoritative", "Bold", "Direct"],
     thumbnail: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2574&auto=format&fit=crop",
     energy: "High",
-    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_MARCUS",
-    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_MARCUS",
+    heygen_avatar_id: "bd3a37b07456488e87757da1f9f0673d",
+    default_voice_id: "c65bd88dd28f4ae2b6cb6d8676a41c03",
   },
   {
     id: "a4",
@@ -72,8 +64,8 @@ const MOCK_ACTORS: Actor[] = [
     tags: ["Gentle", "Storyteller", "Warm"],
     thumbnail: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop",
     energy: "Calm",
-    heygen_avatar_id: "REPLACE_WITH_HEYGEN_AVATAR_ID_SARAH",
-    default_voice_id: "REPLACE_WITH_HEYGEN_VOICE_ID_SARAH",
+    heygen_avatar_id: "1727071993",
+    default_voice_id: "a3c2199a45074765a2aaef907f2b0b30",
   }
 ];
 
@@ -92,15 +84,15 @@ export default function ActorGallery({ onSelect }: { onSelect?: (selection: Acto
         <div>
           <h3 className="text-xl font-bold flex items-center gap-2">
             <User className="text-primary" size={18} />
-             Cast Your Hero
+            Cast Your Hero
           </h3>
           <p className="text-xs text-muted-foreground mt-1">Select the AI Digital Twin to represent your brand.</p>
         </div>
 
         <div className="flex gap-2">
-           <button className="p-2 hover:bg-white/5 rounded-lg border border-white/5 transition-all text-muted-foreground">
-             <Filter size={16} />
-           </button>
+          <button className="p-2 hover:bg-white/5 rounded-lg border border-white/5 transition-all text-muted-foreground">
+            <Filter size={16} />
+          </button>
         </div>
       </div>
 
@@ -154,9 +146,9 @@ export default function ActorGallery({ onSelect }: { onSelect?: (selection: Acto
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute inset-0 z-20 flex items-center justify-center"
                 >
-                   <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
-                     <Play size={20} fill="currentColor" />
-                   </div>
+                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
+                    <Play size={20} fill="currentColor" />
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -168,8 +160,8 @@ export default function ActorGallery({ onSelect }: { onSelect?: (selection: Acto
                 <span className={cn(
                   "text-[8px] font-bold uppercase px-2 py-0.5 rounded-full border",
                   actor.energy === "High" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
-                  actor.energy === "Professional" ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
-                  "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                    actor.energy === "Professional" ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
+                      "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                 )}>
                   {actor.energy}
                 </span>
