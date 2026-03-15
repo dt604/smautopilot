@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS social_posts (
     caption TEXT,
     scheduled_at TIMESTAMPTZ,
     posted_at TIMESTAMPTZ,
-    external_post_id TEXT, -- platform's native ID
+    external_post_id TEXT, -- platform's native post ID
+    ayrshare_post_id TEXT, -- Ayrshare internal ID, used to poll status
     status TEXT DEFAULT 'scheduled', -- 'scheduled', 'posted', 'failed'
     created_at TIMESTAMPTZ DEFAULT now()
 );

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Share2, Link as LinkIcon, Check, Plus, AlertCircle, Instagram, Youtube, Video } from "lucide-react";
+import { Share2, Link as LinkIcon, Check, Plus, AlertCircle, Instagram, Youtube, Video, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -22,43 +23,54 @@ interface SocialPlatform {
 
 export default function SocialAccountManager() {
   const [platforms, setPlatforms] = useState<SocialPlatform[]>([
-    { 
-      id: "tiktok", 
-      name: "TikTok", 
-      icon: <Video size={20} />, 
-      status: "connected", 
-      username: "@brand_master", 
-      followers: "12.4k",
-      color: "bg-black" 
-    },
-    { 
-      id: "instagram", 
-      name: "Instagram", 
-      icon: <Instagram size={20} />, 
-      status: "disconnected", 
-      color: "bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-500" 
-    },
-    { 
-      id: "youtube", 
-      name: "YouTube", 
-      icon: <Youtube size={20} />, 
-      status: "pending", 
-      username: "Brand Official",
-      color: "bg-red-600" 
-    },
+    { id: "tiktok", name: "TikTok", icon: <Video size={20} />, status: "disconnected", color: "bg-black" },
+    { id: "instagram", name: "Instagram", icon: <Instagram size={20} />, status: "disconnected", color: "bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-500" },
+    { id: "youtube", name: "YouTube", icon: <Youtube size={20} />, status: "disconnected", color: "bg-red-600" },
   ]);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    async function fetchPlatforms() {
+      try {
+        const res = await fetch("/api/social/platforms");
+        const json = await res.json();
+        if (json.success) {
+          setPlatforms(prev => prev.map(p => {
+            const remote = json.data.platforms.find((r: any) => r.platform === p.id);
+            return {
+              ...p,
+              status: remote?.connected ? "connected" : "disconnected",
+              username: remote?.username
+            };
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch social platforms:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchPlatforms();
+  }, []);
+
   const handleConnect = (id: string) => {
+    // In a real app, this would redirect to Ayrshare's Max Social Link or a custom OAuth flow.
+    // For now, we simulate the handshake.
+    toast.info(`Redirecting to ${id} authentication...`);
     setIsConnecting(id);
-    // Simulate OAuth handshake
     setTimeout(() => {
-      setPlatforms(prev => prev.map(p => 
-        p.id === id ? { ...p, status: "connected", username: "@new_handle" } : p
-      ));
-      setIsConnecting(null);
+      handleConnectMock(id);
     }, 2000);
+  };
+
+  const handleConnectMock = (id: string) => {
+    setPlatforms(prev => prev.map(p => 
+      p.id === id ? { ...p, status: "connected", username: "@verified_brand" } : p
+    ));
+    setIsConnecting(null);
+    toast.success(`${id} connected successfully!`);
   };
 
   return (

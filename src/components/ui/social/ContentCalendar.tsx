@@ -29,8 +29,37 @@ const MOCK_POSTS: ScheduledPost[] = [
 
 export default function ContentCalendar() {
   const [currentDate] = useState(new Date());
+  const [posts, setPosts] = useState<ScheduledPost[]>(MOCK_POSTS);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Simple calendar generation for current month
+  // Fetch real posts from Supabase
+  React.useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const response = await fetch("/api/social/posts"); // Note: I might need to create this or use supabase directly
+        const json = await response.json();
+        if (json.success) {
+          // Map DB rows to ScheduledPost shape
+          const mapped: ScheduledPost[] = json.data.map((p: any) => ({
+            id: p.id,
+            title: p.caption,
+            platform: p.platform,
+            status: p.status,
+            time: p.scheduled_at ? new Date(p.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "NOW",
+            date: p.scheduled_at ? new Date(p.scheduled_at).getDate() : new Date(p.created_at).getDate(),
+            thumbnail: p.videos?.video_url
+          }));
+          setPosts(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch calendar posts:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchPosts();
+  }, []);
+
   const daysInMonth = 31; // Simplified
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
@@ -77,7 +106,7 @@ export default function ContentCalendar() {
             
             {/* Day Slots */}
             {days.map(day => {
-              const postsForDay = MOCK_POSTS.filter(p => p.date === day);
+              const postsForDay = posts.filter(p => p.date === day);
               
               return (
                 <div 
