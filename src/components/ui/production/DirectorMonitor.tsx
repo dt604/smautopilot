@@ -32,7 +32,39 @@ export default function DirectorMonitor({ scriptId, avatarId, voiceId }: Directo
   const [finalVideoUrl, setFinalVideoUrl] = useState<string | null>(null);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
   
+  // Distribution State
+  const [showScheduler, setShowScheduler] = useState(false);
+  const [caption, setCaption] = useState("");
+  const [platforms, setPlatforms] = useState<("tiktok" | "instagram" | "youtube")[]>(["tiktok"]);
+  const [isScheduling, setIsScheduling] = useState(false);
+  
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleSchedule = async () => {
+    if (!videoId) return;
+    setIsScheduling(true);
+    try {
+      const response = await fetch("/api/schedule-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          video_id: videoId,
+          caption,
+          platforms,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Failed to schedule post.");
+
+      toast.success("Post queued for distribution!");
+      setShowScheduler(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsScheduling(false);
+    }
+  };
 
   const STEPS: LogEntry[] = [
     { id: "1", message: "Synchronizing Brand Identity & Script", status: progress > 10 ? "done" : progress > 0 ? "active" : "pending" },
@@ -206,16 +238,72 @@ export default function DirectorMonitor({ scriptId, avatarId, voiceId }: Directo
                       <p className="text-sm text-white/60">Final cut ready for distribution.</p>
                    </div>
                    
-                   <div className="flex gap-4 pointer-events-auto">
-                      <button className="flex items-center gap-2 px-6 py-2 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold hover:bg-white/20 transition-all border border-white/20">
-                         <Share2 size={14} /> Send to TikTok
-                      </button>
-                      <button 
-                         onClick={() => { setStatus("idle"); setProgress(0); setVideoId(null); setFinalVideoUrl(null); }}
-                         className="flex items-center gap-2 px-6 py-2 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold hover:bg-white/20 transition-all border border-white/20"
-                      >
-                         <RefreshCcw size={14} /> New Production
-                      </button>
+                    <div className="flex gap-4 pointer-events-auto">
+                      {!showScheduler ? (
+                        <button 
+                          onClick={() => setShowScheduler(true)}
+                          className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20"
+                        >
+                           <Share2 size={16} /> Schedule Distribution
+                        </button>
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="glass p-4 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 w-[300px] space-y-4"
+                        >
+                           <div className="space-y-2">
+                              <p className="text-[10px] font-black uppercase text-white/40">Post Caption</p>
+                              <textarea 
+                                value={caption}
+                                onChange={(e) => setCaption(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs focus:outline-none focus:ring-1 ring-primary"
+                                placeholder="Write a viral hook..."
+                                rows={2}
+                              />
+                           </div>
+                           
+                           <div className="flex gap-2">
+                              {["tiktok", "instagram", "youtube"].map((p) => (
+                                <button 
+                                  key={p}
+                                  onClick={() => setPlatforms(prev => prev.includes(p as any) ? prev.filter(x => x !== p) : [...prev, p as any])}
+                                  className={cn(
+                                    "flex-1 py-1.5 rounded-lg text-[8px] font-black uppercase border transition-all",
+                                    platforms.includes(p as any) ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/5 text-muted-foreground"
+                                  )}
+                                >
+                                   {p}
+                                </button>
+                              ))}
+                           </div>
+
+                           <div className="flex gap-2">
+                              <button 
+                                onClick={() => setShowScheduler(false)}
+                                className="flex-1 py-2 text-[8px] font-black uppercase text-white/40 hover:text-white"
+                              >
+                                Cancel
+                              </button>
+                              <button 
+                                onClick={handleSchedule}
+                                disabled={isScheduling || !caption || platforms.length === 0}
+                                className="flex-1 py-2 bg-primary text-white text-[8px] font-black uppercase rounded-lg disabled:opacity-30"
+                              >
+                                {isScheduling ? "Queuing..." : "Confirm Post"}
+                              </button>
+                           </div>
+                        </motion.div>
+                      )}
+                      
+                      {!showScheduler && (
+                        <button 
+                           onClick={() => { setStatus("idle"); setProgress(0); setVideoId(null); setFinalVideoUrl(null); }}
+                           className="flex items-center gap-2 px-6 py-2 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold hover:bg-white/20 transition-all border border-white/20"
+                        >
+                           <RefreshCcw size={14} /> Reset
+                        </button>
+                      )}
                    </div>
                 </div>
               </motion.div>
